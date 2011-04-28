@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.Common;
 using System.Data.Linq;
-using System.Data.Linq.Mapping;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -13,7 +12,7 @@ using System.Data;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace BTR.Core.Linq
+namespace Linqpad.Extensions
 {
 	public static class LinqToSqlExtensions
 	{

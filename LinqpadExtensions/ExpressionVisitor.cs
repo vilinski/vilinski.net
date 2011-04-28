@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
-namespace BTR.Core.Linq
+namespace Linqpad.Extensions
 {
 	public static class ExpressionExtensions
 	{
@@ -47,7 +46,7 @@ namespace BTR.Core.Linq
 	/// </summary>
 	public class ExpressionVisitor<T> : ExpressionVisitor where T : Expression
 	{
-		Func<T, Expression> visitor;
+		readonly Func<T, Expression> visitor;
 
 		public ExpressionVisitor( Func<T, Expression> visitor )
 		{
