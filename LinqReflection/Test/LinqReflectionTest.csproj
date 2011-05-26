@@ -44,8 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NonGenericReflectTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReflectTest.cs" />
+    <Compile Include="GenericReflectTest.cs" />
+    <Compile Include="StaticReflectTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\RecentList\RecentList.csproj">
