@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using RecentList;
 
 namespace LinqReflection
@@ -9,8 +10,9 @@ namespace LinqReflection
 	public class Reflect
 	{
 		private static readonly Dictionary<string,StaticReflection> s_reflections = new Dictionary<string, StaticReflection>();
+	    private static MruDictionary<ReflectionKey,Getter> _Getters = new MruDictionary<ReflectionKey, Getter>(128);
 
-		/// <exception cref="ArgumentNullException"><paramref name="instance" /> is <c>null</c>.</exception>
+	    /// <exception cref="ArgumentNullException"><paramref name="instance" /> is <c>null</c>.</exception>
 		/// <exception cref="ArgumentException">Couldn't get a type name</exception>
 		public static StaticReflection ByInstance(object instance)
 		{
@@ -49,9 +51,106 @@ namespace LinqReflection
 			}
 			return (StaticReflection<T>)reflection;
 		}
+
+        public static Getter TryGetGetter(Type type, string memberName)
+	    {
+	        var key = new ReflectionKey {TypeName = GetTypeName(type), MemberName = memberName};
+            Getter getter = null;
+            if (!_Getters.TryGetValue(key, out getter))
+            {
+                var property = type.GetProperty(memberName);
+                Type memberType;
+                MemberInfo member;
+                if (property != null)
+                {
+                    member = property;
+                    memberType = property.PropertyType;
+                }
+                else
+                {
+                    var field = type.GetField(memberName);
+                    member = field;
+                    memberType = field.FieldType;
+                }
+                if (member == null)
+                    return null;
+
+	            ParameterExpression param = Expression.Parameter(type, "x");
+	            var body = Expression.MakeMemberAccess(param, member);
+	            dynamic lambda = Expression.Lambda(memberType, body, param).Compile();
+                getter = (Getter) buildGetter(lambda);
+                _Getters[key] = getter;
+            }
+            return getter;
+	    }
+
+	    private static Getter<T,P> buildGetter<T,P>(Func<T,P> func )
+	    {
+	        return new Getter<T,P>(func);
+	    }
+
+	    private static string GetTypeName(Type type)
+	    {
+	        //TODO get full type name with generic arguments, e.g. Dictionary<int,string> von linqpad
+	        return type.FullName;
+	    }
 	}
 
-	public class StaticReflection
+    public class ReflectionKey
+    {
+        public string TypeName { get; set; }
+
+        public string MemberName { get; set; }
+    }
+
+    public class Getter
+    {
+        private Func<object,object> _getter;
+
+        public Getter(Func<object, object> getter)
+        {
+            _getter = getter;
+        }
+
+        public object Get(object instance)
+        {
+            return _getter.DynamicInvoke(instance);
+        }
+    }
+
+    public class Getter<T> : Getter
+    {
+        private Func<T,object> _getter;
+
+        public Getter(Func<T,object> getter) 
+            : base(instance => getter((T) instance))
+        {
+            _getter = getter;
+        }
+
+        public object Get(T instance)
+        {
+            return _getter(instance);
+        }
+    }
+
+    public class Getter<T,TP> : Getter<T>
+    {
+        private Func<T, TP> _getter;
+
+        public Getter(Func<T,TP> getter)
+            : base(instance => getter(instance))
+        {
+            _getter = getter;
+        }
+
+        public TP Get(T instance)
+        {
+            return _getter(instance);
+        }
+    }
+
+    public class StaticReflection
 	{
 		protected const int InitialMaxCapacity = 128;
 		private readonly MruDictionary<string, Func<object, object>> _Getters;

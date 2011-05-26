@@ -53,7 +53,7 @@ namespace LinqReflectionTest
 			Assert.Fail("Exception is not thrown");
 		}
 		[TestMethod]
-		public void DoNotThrowsExceptionIfSetIndexerValue()
+		public void DoNotThrowsExceptionIfSetValuePerIndexer()
 		{
 			// ARRANGE
 			var dict = new MruDictionary<string, string>();
