@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace IwAG.Win.UI.Controls
 {
@@ -19,12 +21,18 @@ namespace IwAG.Win.UI.Controls
             get { return _test; }
             set
             {
-                _test = value;
-                if (PropertyChanged != null)
-                    PropertyChanged(this, new PropertyChangedEventArgs("Test"));
+            	_test = value;
+				onPropertyChanged(this, _ => Test);
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		private void onPropertyChanged<TModel, TPropetyType>(TModel model, Expression<Func<TModel, TPropetyType>> property)
+    	{
+    		var propertyName = ((MemberExpression)property.Body).Member.Name;
+    		if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    	}
+
+    	public event PropertyChangedEventHandler PropertyChanged;
     }
 }

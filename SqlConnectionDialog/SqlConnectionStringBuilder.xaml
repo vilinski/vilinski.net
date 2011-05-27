@@ -8,14 +8,11 @@
     </UserControl.Resources>
     <GroupBox>
         <GroupBox.Header>
-            <TextBlock Text="{Binding ElementName=_this, Path=Header}"
-                       FontSize="14"
-                       FontWeight="Bold" />
+            <TextBlock Text="{Binding ElementName=_this, Path=Header}" FontSize="14" FontWeight="Bold" />
         </GroupBox.Header>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -23,16 +20,11 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBlock Text="Server: "
-                       VerticalAlignment="Center"
-                       Margin="3"
-                       Grid.Column="0"
-                       Grid.Row="0" />
+            <TextBlock Text="Server: " VerticalAlignment="Center" Margin="3" Grid.Column="0" Grid.Row="0" />
             <Grid Grid.Column="1"
                   Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1*" /> <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <ComboBox Margin="3"
                           x:Name="SqlServerName"
@@ -44,16 +36,10 @@
                                                VerticalAlignment="Center"
                                                Visibility="{Binding ElementName=_this, Path=ServersLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
-            <TextBlock Text="Database: "
-                       VerticalAlignment="Center"
-                       Margin="3"
-                       Grid.Column="0"
-                       Grid.Row="1" />
-            <Grid Grid.Column="1"
-                  Grid.Row="1">
+            <TextBlock Text="Database: " VerticalAlignment="Center" Margin="3" Grid.Column="0" Grid.Row="1" />
+            <Grid Grid.Column="1" Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="1*" /> <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <ComboBox Margin="3"
                           x:Name="SqlDatabaseName"
@@ -94,37 +80,21 @@
                     </RadioButton>
                     <Grid Visibility="{Binding ElementName=SqlAuthTypeSql, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="Auto" /> <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" /> <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Username: "
-                                   Grid.Column="0"
-                                   Grid.Row="0"
-                                   Margin="3"
-                                   VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1"
-                                 Grid.Row="0"
-                                 Margin="3"
+                        <TextBlock Text="Username: " Grid.Column="0" Grid.Row="0" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1"  Grid.Row="0" Margin="3" 
                                  Text="{Binding ElementName=_this, Path=ConnectionString.UserName, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock Text="Password: "
-                                   Grid.Column="0"
-                                   Grid.Row="1"
-                                   Margin="3"
-                                   VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1"
-                                 Grid.Row="1"
-                                 Margin="3"
+                        <TextBlock Text="Password: " Grid.Column="0" Grid.Row="1" Margin="3" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" Grid.Row="1" Margin="3"
                                  Text="{Binding ElementName=_this, Path=ConnectionString.Password, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                 </StackPanel>
             </GroupBox>
-            <ContentPresenter Grid.Column="0"
-                              Grid.Row="3"
-                              Grid.ColumnSpan="3"
+            <ContentPresenter Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3"
                               Content="{Binding ElementName=_this, Path=Footer}" />
         </Grid>
     </GroupBox>

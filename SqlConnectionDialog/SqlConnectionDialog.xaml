@@ -10,9 +10,12 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <WpfApplication1:SqlConnectionStringBuilder ConnectionString="{Binding ElementName=_this, Path=Test}" />
         <TextBlock Text="{Binding ElementName=_this, Path=Test, StringFormat='Produced Connection String: {0}'}"
                    Grid.Row="1" />
+        <TextBlock Text="{Binding ElementName=_this.Test, Path=ShortInfo, StringFormat='Produced Connection String: {0}'}"
+                   Grid.Row="2" />
     </Grid>
 </Window>

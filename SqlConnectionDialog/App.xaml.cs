@@ -12,5 +12,6 @@ namespace IwAG.Win.UI.Controls
     /// </summary>
     public partial class App : Application
     {
+		//http://jake.ginnivan.net/wpf-sql-connection-user-control
     }
 }

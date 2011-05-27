@@ -1,0 +1,34 @@
+﻿<Window x:Class="IwAG.Win.UI.Controls.DbToolLight"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DbToolLight">
+    <Grid Height="50" Width="400" DataContext="{Binding}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition  Width="Auto"/>
+            <ColumnDefinition  Width="Auto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Label Content="Pro" Name="labelPro" />
+        <ComboBox Name="comboBoxPro" Grid.Column="1"/>
+        <Button Content="..." Name="btnChangePro" Grid.Column="2" ToolTip="Open connection dialog" />
+        <Button Content="Copy" Name="btnCopyPro" Grid.Column="3" ToolTip="Copy connection dialog" />
+        <Button Content="Paste" Name="btnPastePro" Grid.Column="4" ToolTip="Paste connection dialog" />
+        <Button Content="DbTool" Name="btnDbtoolPro" Grid.Column="5"  ToolTip="Open DbTool" />
+
+        <Label Content="Office" Name="labelOffice" Grid.Row="1" />
+        <ComboBox Name="comboBoxOffice" Grid.Column="1" Grid.Row="1"/>
+        <Button Content="..." Name="btnChangeOffice" Grid.Column="2" ToolTip="Open connection dialog" Grid.Row="1" />
+        <Button Content="Copy" Name="btnCopyOffice" Grid.Column="3" ToolTip="Copy connection dialog" Grid.Row="1" />
+        <Image Grid.Column="3"  Grid.Row="1" DataContext="{Binding}" />
+        <Button Content="Paste" Name="btnPasteOffice" Grid.Column="4" ToolTip="Paste connection dialog"  Grid.Row="1"/>
+        <Button Content="DbTool" Name="btnDbtoolOffice" Grid.Column="5"  ToolTip="Open DbTool"  Grid.Row="1"/>
+    </Grid>
+</Window>

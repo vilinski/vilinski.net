@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -16,54 +17,56 @@ namespace IwAG.Win.UI.Controls
     {
         private static readonly SqlConnectionString DefaultValue = new SqlConnectionString { IntegratedSecurity = true, Pooling = false };
 
-        public static readonly DependencyProperty FooterProperty =
-            DependencyProperty.Register("Footer", 
-            typeof(FrameworkElement),
-            typeof(SqlConnectionStringBuilder));
-
-        public static readonly DependencyProperty ConnectionStringProperty =
-            DependencyProperty.Register("ConnectionString", typeof (SqlConnectionString),
-                                        typeof (SqlConnectionStringBuilder),
-                                        new FrameworkPropertyMetadata(
-                                            DefaultValue, 
-                                            FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                                            ConnectionStringChanged));
-
-        private static void ConnectionStringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var builder = (SqlConnectionStringBuilder) d;
-            if (e.NewValue == null)
-                builder.Dispatcher.BeginInvoke((Action)(() => d.SetValue(ConnectionStringProperty, DefaultValue)));
-            else
-                builder.RegisterNewConnectionString((SqlConnectionString)e.NewValue);
-        }
-
-        public SqlConnectionStringBuilder()
+    	public SqlConnectionStringBuilder()
             : this(new SmoTasks())
         {
             InitializeComponent();
         }
 
-        public SqlConnectionString ConnectionString
-        {
-            get { return (SqlConnectionString)GetValue(ConnectionStringProperty); }
-            set { SetValue(ConnectionStringProperty, value); }
-        }
+    	#region ConnectionString
 
-        public FrameworkElement Footer
-        {
-            get
-            {
-                return (FrameworkElement)GetValue(FooterProperty);
-            }
-            set
-            {
-                SetValue(FooterProperty, value);
-            }
-        }
+    	public SqlConnectionString ConnectionString
+    	{
+    		get { return (SqlConnectionString)GetValue(ConnectionStringProperty); }
+    		set { SetValue(ConnectionStringProperty, value); }
+    	}
 
+    	public static readonly DependencyProperty ConnectionStringProperty =
+    		DependencyProperty.Register("ConnectionString", typeof (SqlConnectionString),
+    			typeof (SqlConnectionStringBuilder),
+    			new FrameworkPropertyMetadata(
+    				DefaultValue, 
+    				FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
+    				ConnectionStringChanged));
+
+    	private static void ConnectionStringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    	{
+    		var builder = (SqlConnectionStringBuilder) d;
+    		if (e.NewValue == null)
+    			builder.Dispatcher.BeginInvoke((Action)(() => d.SetValue(ConnectionStringProperty, DefaultValue)));
+    		else
+    			builder.RegisterNewConnectionString((SqlConnectionString)e.NewValue);
+    	}
+
+    	#endregion ConnectionString
+		
+    	#region Footer
+
+    	public static readonly DependencyProperty FooterProperty =
+    		DependencyProperty.Register("Footer", 
+    			typeof(FrameworkElement),
+    			typeof(SqlConnectionStringBuilder));
+
+    	public FrameworkElement Footer
+    	{
+    		get { return (FrameworkElement)GetValue(FooterProperty); }
+    		set { SetValue(FooterProperty, value); }
+    	}
+
+    	#endregion Footer
+		
         private readonly ISmoTasks _smoTasks;
-        private static ObservableCollection<string> _servers;
+        private static ObservableRangeCollection<string> _servers;
         private static readonly object ServersLock = new object();
 
         private readonly ObservableCollection<string> _databases = new ObservableCollection<string>();
@@ -117,7 +120,7 @@ namespace IwAG.Win.UI.Controls
                 {
                     if (_servers == null)
                     {
-                        _servers = new ObservableCollection<string>();
+                        _servers = new ObservableRangeCollection<string>();
                         ServersLoading = true;
                         LoadServersAsync();
                     }
@@ -165,12 +168,10 @@ namespace IwAG.Win.UI.Controls
 
         private void OnPropertyChanged(params string[] propertyNames)
         {
-            if (PropertyChanged == null) return;
-
-            foreach (var propertyName in propertyNames)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            if (PropertyChanged == null) 
+				return;
+        	foreach (var propertyName in propertyNames)
+        		PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
         void DbLoaderDoWork(object sender, DoWorkEventArgs e)
@@ -183,7 +184,8 @@ namespace IwAG.Win.UI.Controls
 
             _lastServer = connString.Server;
 
-            if (string.IsNullOrEmpty(connString.Server)) return;
+            if (string.IsNullOrWhiteSpace(connString.Server)) 
+				return;
 
             e.Result = _smoTasks.GetDatabases(connString);
         }
@@ -217,14 +219,21 @@ namespace IwAG.Win.UI.Controls
 
             serverLoader.RunWorkerCompleted += ((sender, e) =>
             {
-                foreach (var server in (string[])e.Result)
-                {
-                    _servers.Add(server);
-                }
-                ServersLoading = false;
+            	var servers = (string[])e.Result;
+            	_servers.AddRange(servers);
+            	ServersLoading = false;
             });
 
             serverLoader.RunWorkerAsync();
         }
     }
+
+	public class ObservableRangeCollection<T> : ObservableCollection<T>
+	{
+		public void AddRange(IEnumerable<T> collection)
+		{
+			foreach (var i in collection) Items.Add(i);
+			OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+		}
+	}
 }

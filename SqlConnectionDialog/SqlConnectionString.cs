@@ -2,13 +2,14 @@
 
 namespace IwAG.Win.UI.Controls
 {
-    public class SqlConnectionString : INotifyPropertyChanged
+    public class SqlConnectionString : ViewModel
     {
-        private readonly System.Data.SqlClient.SqlConnectionStringBuilder _builder = new System.Data.SqlClient.SqlConnectionStringBuilder
-                                                                   {
-                                                                       Pooling = false,
-                                                                       IntegratedSecurity = true
-                                                                   };
+    	private readonly System.Data.SqlClient.SqlConnectionStringBuilder _builder =
+    		new System.Data.SqlClient.SqlConnectionStringBuilder
+    		{
+    			Pooling = false,
+    			IntegratedSecurity = true
+    		};
 
         public SqlConnectionString()
         { }
@@ -26,7 +27,7 @@ namespace IwAG.Win.UI.Controls
         public override string ToString()
         {
             if (Server.EndsWith(".sdf"))
-                if (string.IsNullOrEmpty(Password))
+                if (string.IsNullOrWhiteSpace(Password))
                     return new System.Data.SqlClient.SqlConnectionStringBuilder {DataSource = Server}.ConnectionString;
                 else
                     return new System.Data.SqlClient.SqlConnectionStringBuilder {DataSource = Server, Password = Password}.
@@ -52,6 +53,11 @@ namespace IwAG.Win.UI.Controls
                            Pooling = Pooling
                        };
         }
+
+    	public string ShortInfo
+    	{
+			get { return (IntegratedSecurity ? Server : Server + "." + UserName) + " " + Database; }
+    	}
 
         public string Server
         {
@@ -161,20 +167,11 @@ namespace IwAG.Win.UI.Controls
         public bool IsValid()
         {
             return 
-                (!string.IsNullOrEmpty(Server) && Server.EndsWith(".sdf")) ||
-                (!string.IsNullOrEmpty(Server) &&
-                 !string.IsNullOrEmpty(Database) &&
-                 (IntegratedSecurity || (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))));
+                (!string.IsNullOrWhiteSpace(Server) && Server.EndsWith(".sdf")) ||
+                (!string.IsNullOrWhiteSpace(Server) &&
+                 !string.IsNullOrWhiteSpace(Database) &&
+                 (IntegratedSecurity || (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password))));
         }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged == null) return;
-
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
 
