@@ -46,6 +46,14 @@ namespace LinqReflection
 
 		//#endregion
 
+	    [TestMethod]
+	    public void GetProperty()
+	    {
+	        Getter getter = Reflect.TryGetGetter(typeof(string), "Length");
+            Assert.IsNotNull(getter, "Couldn't create getter");
+	        var ret = getter.Get("string");
+            Assert.AreEqual(6, ret, "Getter does not work.");
+	    }
 		[TestMethod]
 		public void CacheByTypeTest()
 		{
@@ -66,13 +74,13 @@ namespace LinqReflection
 			Assert.IsTrue(ret1, "TryGetGetter should return true for existing property");
 			Assert.IsTrue(ret2);
 			Assert.IsTrue(ret3);
-			Assert.IsTrue(ReferenceEquals(r1, r2), "Not the same reflection instance of cached reflection");
-			Assert.IsTrue(ReferenceEquals(r2, r3), "Not the same reflection instance of cached reflection");
-			Assert.IsTrue(ReferenceEquals(r3, r1), "Not the same reflection instance of cached reflection");
+			Assert.AreSame(r1, r2, "Not the same reflection instance of cached reflection");
+            Assert.AreSame(r1, r2, "Not the same reflection instance of cached reflection");
+            Assert.AreSame(r1, r2, "Not the same reflection instance of cached reflection");
 
-			Assert.IsTrue(ReferenceEquals(g1, g2), "Not the same getter instance of cached getter");
-			Assert.IsTrue(ReferenceEquals(g2, g3), "Not the same getter instance of cached getter");
-			Assert.IsTrue(ReferenceEquals(g3, g1), "Not the same getter instance of cached getter");
+            Assert.AreSame(r1, r2, "Not the same getter instance of cached getter");
+            Assert.AreSame(r1, r2, "Not the same getter instance of cached getter");
+            Assert.AreSame(r1, r2, "Not the same getter instance of cached getter");
 
 			Assert.AreEqual(1, r1.Count, "More than one getter after multiple access");
 		}
