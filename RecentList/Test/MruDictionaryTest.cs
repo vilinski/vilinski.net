@@ -84,7 +84,6 @@ namespace LinqReflectionTest
 		public void KeepOrderOfItemsFromCtorParameter()
 		{
 			// ARRANGE
-			
 			var items = new Dictionary<string,string>
 			{
 				{"aa", "aa"}, {"bb", "bb"}, {"cc", "cc"}
