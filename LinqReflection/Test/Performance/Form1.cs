@@ -228,5 +228,41 @@ namespace LinqReflection.PerformanceTest
 		{
 			MakeFastProperties(MakeTextBox);
 		}
+
+		private void DRunButton_Click(object sender, EventArgs e)
+		{
+			dynamic emp = new Employee { Name = "Mike", Age = null, HireDate = DateTime.Now.AddYears(-3) };
+			dynamicGet(emp, DGetResults);
+			dynamicSet(emp, "Jason", DSetResults);
+		}
+
+		/// <summary>
+		/// Natives the get.
+		/// </summary>
+		/// <param name="instance">The instance.</param>
+		/// <param name="results">The results.</param>
+		private static void dynamicGet(dynamic instance, Control results)
+		{
+			DateTime start = DateTime.Now;
+			for (int i = 0; i < 10000000; i++)
+			{
+				string value = instance.Name;
+			}
+			DateTime end = DateTime.Now;
+
+			results.Text = (end - start).TotalMilliseconds + "ms";
+		}
+
+		private static void dynamicSet(dynamic instance, string value, Control results)
+		{
+			DateTime start = DateTime.Now;
+			for (int i = 0; i < 10000000; i++)
+			{
+				instance.Name = value;
+			}
+			DateTime end = DateTime.Now;
+
+			results.Text = (end - start).TotalMilliseconds + "ms";
+		}
 	}
 }
