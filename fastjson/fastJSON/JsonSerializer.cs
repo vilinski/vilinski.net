@@ -15,21 +15,21 @@ namespace fastJSON
     internal class JSONSerializer
     {
         private readonly StringBuilder _output = new StringBuilder();
-        readonly bool useMinimalDataSetSchema;
-        readonly bool fastguid = true;
-        readonly bool useExtension = true;
-        readonly bool serializeNulls = true;
-        readonly int _MAX_DEPTH = 10;
-        bool _Indent = false;
-        int _current_depth = 0;
+        readonly bool _useMinimalDataSetSchema;
+        readonly bool _fastguid = true;
+        readonly bool _useExtension = true;
+        readonly bool _serializeNulls = true;
+        private const int MaxDepth = 10;
+        readonly bool _indent;
+        int _currentDepth;
 
-        internal JSONSerializer(bool UseMinimalDataSetSchema, bool UseFastGuid, bool UseExtensions, bool SerializeNulls, bool IndentOutput)
+        internal JSONSerializer(bool useMinimalDataSetSchema, bool useFastGuid, bool useExtensions, bool serializeNulls, bool indentOutput)
         {
-            this.useMinimalDataSetSchema = UseMinimalDataSetSchema;
-            this.fastguid = UseFastGuid;
-            this.useExtension = UseExtensions;
-            _Indent = IndentOutput;
-            this.serializeNulls = SerializeNulls;
+            _useMinimalDataSetSchema = useMinimalDataSetSchema;
+            _fastguid = useFastGuid;
+            _useExtension = useExtensions;
+            _indent = indentOutput;
+            _serializeNulls = serializeNulls;
         }
 
         internal string ConvertToJSON(object obj)
@@ -41,7 +41,7 @@ namespace fastJSON
 
         private void WriteValue(object obj)
         {
-            if (serializeNulls && (obj == null || obj is DBNull))
+            if (_serializeNulls && (obj == null || obj is DBNull))
                 _output.Append("null");
 
             else if (obj is string || obj is char)
@@ -75,7 +75,7 @@ namespace fastJSON
                 WriteDataset((DataSet)obj);
 
             else if (obj is DataTable)
-                this.WriteDataTable((DataTable)obj);
+                WriteDataTable((DataTable)obj);
 #endif
             else if (obj is byte[])
                 WriteBytes((byte[])obj);
@@ -111,7 +111,7 @@ namespace fastJSON
 
         private void WriteGuid(Guid g)
         {
-            if (fastguid == false)
+            if (_fastguid == false)
                 WriteStringFast(g.ToString());
             else
                 WriteBytes(g.ToByteArray());
@@ -149,9 +149,7 @@ namespace fastJSON
         {
             if (ds == null) return null;
 
-            DatasetSchema m = new DatasetSchema();
-            m.Info = new List<string>();
-            m.Name = ds.DataSetName;
+            var m = new DatasetSchema {Info = new List<string>(), Name = ds.DataSetName};
 
             foreach (DataTable t in ds.Tables)
             {
@@ -179,9 +177,9 @@ namespace fastJSON
         private void WriteDataset(DataSet ds)
         {
             _output.Append('{');
-            if (useExtension)
+            if (_useExtension)
             {
-                WritePair("$schema", useMinimalDataSetSchema ? (object)GetSchema(ds) : ds.GetXmlSchema());
+                WritePair("$schema", _useMinimalDataSetSchema ? (object)GetSchema(ds) : ds.GetXmlSchema());
                 _output.Append(',');
             }
             foreach (DataTable table in ds.Tables)
@@ -217,31 +215,31 @@ namespace fastJSON
 
 		void WriteDataTable( DataTable dt )
 		{
-			this._output.Append( '{' );
-			if( this.useExtension )
+			_output.Append( '{' );
+			if( _useExtension )
 			{
-				this.WritePair( "$schema", this.useMinimalDataSetSchema ? ( object )this.GetSchema( dt.DataSet ) : this.GetXmlSchema( dt ) );
-				this._output.Append( ',' );
+				WritePair( "$schema", _useMinimalDataSetSchema ? ( object )GetSchema( dt.DataSet ) : GetXmlSchema( dt ) );
+				_output.Append( ',' );
 			}
 
             WriteDataTableData(dt);
 
 			// end datatable
-			this._output.Append( '}' );
+			_output.Append( '}' );
 		}
 #endif
         private void WriteObject(object obj)
         {
             Indent();
-            _current_depth++;
-            if (_current_depth > _MAX_DEPTH)
-                throw new Exception("Serializer encountered maximum depth of " + _MAX_DEPTH);
+            _currentDepth++;
+            if (_currentDepth > MaxDepth)
+                throw new Exception("Serializer encountered maximum depth of " + MaxDepth);
 
             _output.Append('{');
-            Dictionary<string, string> map = new Dictionary<string, string>();
+            var map = new Dictionary<string, string>();
             Type t = obj.GetType();
             bool append = false;
-            if (useExtension)
+            if (_useExtension)
             {
                 WritePairFast("$type", JSON.Instance.GetTypeAssemblyName(t));
                 append = true;
@@ -254,23 +252,23 @@ namespace fastJSON
                     _output.Append(',');
                 object o = p.Getter(obj);
                 WritePair(p.Name, o);
-                if (o != null && useExtension)
+                if (o != null && _useExtension)
                 {
                 	Type tt = o.GetType();
-                	if (tt == typeof(System.Object))
+                	if (tt == typeof(Object))
                         map.Add(p.Name, tt.ToString());
                 }
                 append = true;
             }
-            if (map.Count > 0 && useExtension)
+            if (map.Count > 0 && _useExtension)
             {
                 _output.Append(",\"$map\":");
                 WriteStringDictionary(map);
             }
-            _current_depth--;    
+            _currentDepth--;    
             Indent();
             _output.Append('}');
-            _current_depth--;
+            _currentDepth--;
 
         }
 
@@ -281,10 +279,10 @@ namespace fastJSON
 
         private void Indent(bool dec)
         {
-            if (_Indent)
+            if (_indent)
             {
                 _output.Append("\r\n");
-                for (int i = 0; i < _current_depth-(dec?1:0); i++)
+                for (int i = 0; i < _currentDepth-(dec?1:0); i++)
                     _output.Append("\t");
             }
         }

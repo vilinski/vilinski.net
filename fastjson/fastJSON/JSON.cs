@@ -329,7 +329,7 @@ namespace fastJSON
                     Getters gg = new Getters();
                     gg.Name = p.Name;
                     gg.Getter = g;
-                    gg.propertyType = p.PropertyType;
+                    gg.PropertyType = p.PropertyType;
                     getters.Add(gg);
                 }
 

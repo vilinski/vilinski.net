@@ -58,6 +58,8 @@ namespace consoletest
             AJKLjaskljLA
        ahjksjkAHJKS سلام فارسی
        AJKHSKJhaksjhAHSJKa
+        а теперь по русски
+        und auf deutsch öäüß€@
        AJKSHajkhsjkHKSJKash
        ASJKhasjkKASJKahsjk
             ";

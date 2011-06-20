@@ -7,7 +7,7 @@ namespace fastJSON
     {
         public string Name;
         public JSON.GenericGetter Getter;
-        public Type propertyType;
+        public Type PropertyType;
     }
 
     public class DatasetSchema
