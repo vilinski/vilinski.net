@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LinqReflection
@@ -47,13 +48,23 @@ namespace LinqReflection
 		//#endregion
 
 	    [TestMethod]
-	    public void GetProperty()
+	    public void GetInstanceProperty()
 	    {
 	        Getter getter = Reflect.TryGetGetter(typeof(string), "Length");
             Assert.IsNotNull(getter, "Couldn't create getter");
-	        var ret = getter.Get("string");
-            Assert.AreEqual(6, ret, "Getter does not work.");
+	        string instance = "string";
+            Assert.AreEqual(instance.Length, getter.Get(instance), "Getter does not work.");
+	    }	    
+
+        [TestMethod]
+	    public void GetStaticProperty()
+	    {
+            Getter getter = Reflect.TryGetGetter(typeof(Regex), "CacheSize");
+            Assert.IsNotNull(getter, "Couldn't create getter");
+            Assert.AreEqual(Regex.CacheSize, getter.Get(null), "Getter does not work.");
 	    }
+
+
 		[TestMethod]
 		public void CacheByTypeTest()
 		{

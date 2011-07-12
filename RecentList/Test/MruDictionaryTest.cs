@@ -52,7 +52,8 @@ namespace LinqReflectionTest
 			// ACCERT
 			Assert.Fail("Exception is not thrown");
 		}
-		[TestMethod]
+		
+        [TestMethod]
 		public void DoNotThrowsExceptionIfSetValuePerIndexer()
 		{
 			// ARRANGE
@@ -66,18 +67,40 @@ namespace LinqReflectionTest
 
 				// ACCERT
 				Assert.AreEqual("bb", dict["aa"], "Value is not set");
+                Assert.AreEqual(1, dict.Count);
 			}
 			catch (ArgumentException e)
 			{
 				Assert.Fail(e.Message + "Exception should not be thrown by setting the value by the same key.");
 			}
-
 		}
 
 		[TestMethod]
 		public void DecreaseMaxCapacityRemovesLruItems()
 		{
-			var dict = new MruDictionary<string, string>();
+            // ARRANGE
+            var items = new Dictionary<string, string>
+			{
+				{"aa", "aa"}, {"bb", "bb"}, {"cc", "cc"}
+			};
+            var dict = new MruDictionary<string, string>(3);
+		    foreach (var item in items)
+		        dict.Add(item.Key, item.Value);
+
+		    // ACT
+            // check precondition
+            Assert.IsTrue(dict.ContainsKey("aa"));
+            Assert.IsTrue(dict.ContainsKey("bb"));
+            Assert.IsTrue(dict.ContainsKey("cc"));
+            Assert.AreEqual(3, dict.Count, "Count mismatch - wrong test conditions");
+
+            dict.MaxCapacity = 2;
+
+            // ACCERT
+            Assert.AreEqual(2, dict.MaxCapacity, "Count mismatch");
+            Assert.AreEqual(2, dict.Count, "Count mismatch");
+            Assert.IsTrue(dict.ContainsKey("bb")); 
+            Assert.IsTrue(dict.ContainsKey("cc")); 
 		}
 
 		[TestMethod]

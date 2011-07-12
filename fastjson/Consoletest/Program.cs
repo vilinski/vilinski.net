@@ -2,43 +2,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
-using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+using fastJSON;
 
 namespace consoletest
 {
-    public class Return 
+    public class Return
     {
         public object ReturnEntity { get; set; }
         public string Name { get; set; }
-        public TimeSpan time { get; set;  }
-        public System.Drawing.Point point { get; set; }
+        public TimeSpan time { get; set; }
+        public Point point { get; set; }
     }
 
-    public class returns : List<Return>
+    public class Returns : List<Return>
     {
-        public string name { get; set; }
+        public string Name { get; set; }
     }
 
     public class NoExt
     {
-    	[System.Xml.Serialization.XmlIgnore()]
-    	public string Name { get; set; }
-    	public string Address { get; set;}
-    	public int Age { get; set;}
-    	public baseclass[] objs { get; set;}
-        public Dictionary<string, string> dic { get; set; }
-    }
-    
-    class Program
-    {
-        static int count = 1000;
-        static int tcount = 5;
-        static DataSet ds = new DataSet();
-        static bool exotic = false;
-        static bool dsser = false;
+        [XmlIgnore]
+        public string Name { get; set; }
 
+        public string Address { get; set; }
+        public int Age { get; set; }
+        public baseclass[] Objs { get; set; }
+        public Dictionary<string, string> Dic { get; set; }
+    }
+
+    internal class Program
+    {
+        private static int count = 1000;
+        private static int tcount = 5;
+        private static DataSet ds = new DataSet();
+        private static bool exotic;
+        private static bool dsser;
 
 
         public static void Main(string[] args)
@@ -63,19 +65,19 @@ namespace consoletest
             //string ts = fastJSON.JSON.Instance.ToJSON(rr);
             //object tsd = fastJSON.JSON.Instance.ToObject(ts);
 
-            NoExt ne = new NoExt();
+            var ne = new NoExt();
             ne.Name = "hello";
             ne.Address = "here";
-            ne.Age= 10;
-            ne.dic = new Dictionary<string, string>();
-            ne.dic.Add("hello", Guid.NewGuid().ToString());
-            ne.objs = new baseclass[] { new class1("a","1",Guid.NewGuid()), new class2("b","2","desc") };
+            ne.Age = 10;
+            ne.Dic = new Dictionary<string, string>();
+            ne.Dic.Add("hello", Guid.NewGuid().ToString());
+            ne.Objs = new baseclass[] {new class1("a", "1", Guid.NewGuid()), new class2("b", "2", "desc")};
 
             //fastJSON.JSON.Instance.UseSerializerExtension = false;
             //fastJSON.JSON.Instance.UseFastGuid = false;
-            string str = fastJSON.JSON.Instance.ToJSON(ne, false);
-            object dic = fastJSON.JSON.Instance.Parse(str);
-            object oo = fastJSON.JSON.Instance.ToObject<NoExt>(str);//<NoExt>(str);
+            string str = JSON.Instance.ToJSON(ne, false);
+            object dic = JSON.Instance.Parse(str);
+            object oo = JSON.Instance.ToObject<NoExt>(str); //<NoExt>(str);
 
             Console.WriteLine(".net version = " + Environment.Version);
             Console.WriteLine("press key : (E)xotic ");
@@ -113,12 +115,13 @@ namespace consoletest
             //			jsonnet_deserialize();
             //			jsonnet4_deserialize();
             //			stack_deserialize();
+
             #endregion
         }
 
         private static string pser(object data)
         {
-            System.Drawing.Point p = (System.Drawing.Point) data;
+            var p = (Point) data;
             return p.X.ToString() + "," + p.Y.ToString();
         }
 
@@ -126,7 +129,7 @@ namespace consoletest
         {
             string[] ss = data.Split(',');
 
-            return new System.Drawing.Point(
+            return new Point(
                 int.Parse(ss[0]),
                 int.Parse(ss[1])
                 );
@@ -134,7 +137,7 @@ namespace consoletest
 
         private static string tsser(object data)
         {
-            return ((TimeSpan)data).Ticks.ToString();
+            return ((TimeSpan) data).Ticks.ToString();
         }
 
         private static object tsdes(string data)
@@ -193,20 +196,20 @@ namespace consoletest
 
         public static DataSet CreateDataset()
         {
-            DataSet ds = new DataSet();
+            var ds = new DataSet();
             for (int j = 1; j < 3; j++)
             {
-                DataTable dt = new DataTable();
+                var dt = new DataTable();
                 dt.TableName = "Table" + j;
-                dt.Columns.Add("col1", typeof(int));
-                dt.Columns.Add("col2", typeof(string));
-                dt.Columns.Add("col3", typeof(Guid));
-                dt.Columns.Add("col4", typeof(string));
-                dt.Columns.Add("col5", typeof(bool));
-                dt.Columns.Add("col6", typeof(string));
-                dt.Columns.Add("col7", typeof(string));
+                dt.Columns.Add("col1", typeof (int));
+                dt.Columns.Add("col2", typeof (string));
+                dt.Columns.Add("col3", typeof (Guid));
+                dt.Columns.Add("col4", typeof (string));
+                dt.Columns.Add("col5", typeof (bool));
+                dt.Columns.Add("col6", typeof (string));
+                dt.Columns.Add("col7", typeof (string));
                 ds.Tables.Add(dt);
-                Random rrr = new Random();
+                var rrr = new Random();
                 for (int i = 0; i < 100; i++)
                 {
                     DataRow dr = dt.NewRow();
@@ -235,11 +238,11 @@ namespace consoletest
                 colclass deserializedStore;
                 string jsonText = null;
 
-                jsonText = fastJSON.JSON.Instance.ToJSON(c);
+                jsonText = JSON.Instance.ToJSON(c);
                 //Console.WriteLine(" size = " + jsonText.Length);
                 for (int i = 0; i < count; i++)
                 {
-                    deserializedStore = (colclass)fastJSON.JSON.Instance.ToObject(jsonText);
+                    deserializedStore = (colclass) JSON.Instance.ToObject(jsonText);
                 }
                 Console.Write("\t" + DateTime.Now.Subtract(st).TotalMilliseconds);
             }
@@ -256,7 +259,7 @@ namespace consoletest
                 string jsonText = null;
                 for (int i = 0; i < count; i++)
                 {
-                    jsonText = fastJSON.JSON.Instance.ToJSON(c);
+                    jsonText = JSON.Instance.ToJSON(c);
                 }
                 Console.Write("\t" + DateTime.Now.Subtract(st).TotalMilliseconds);
             }
@@ -270,15 +273,15 @@ namespace consoletest
             for (int pp = 0; pp < tcount; pp++)
             {
                 DateTime st = DateTime.Now;
-                BinaryFormatter bf = new BinaryFormatter();
-                MemoryStream ms = new MemoryStream();
+                var bf = new BinaryFormatter();
+                var ms = new MemoryStream();
                 bf.Serialize(ms, c);
                 colclass deserializedStore = null;
                 //Console.WriteLine(" size = " +ms.Length);
                 for (int i = 0; i < count; i++)
                 {
                     ms.Seek(0L, SeekOrigin.Begin);
-                    deserializedStore = (colclass)bf.Deserialize(ms);
+                    deserializedStore = (colclass) bf.Deserialize(ms);
                 }
                 Console.Write("\t" + DateTime.Now.Subtract(st).TotalMilliseconds);
             }
@@ -291,8 +294,8 @@ namespace consoletest
             for (int pp = 0; pp < tcount; pp++)
             {
                 DateTime st = DateTime.Now;
-                BinaryFormatter bf = new BinaryFormatter();
-                MemoryStream ms = new MemoryStream();
+                var bf = new BinaryFormatter();
+                var ms = new MemoryStream();
                 for (int i = 0; i < count; i++)
                 {
                     ms = new MemoryStream();
@@ -302,10 +305,8 @@ namespace consoletest
             }
         }
 
-
-
-
         #region [   other tests  ]
+
         /*
 		private static void systemweb_serialize()
 		{
@@ -516,6 +517,7 @@ namespace consoletest
 
 		
 		 */
+
         #endregion
     }
 }

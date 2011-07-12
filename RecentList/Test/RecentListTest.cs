@@ -65,7 +65,7 @@ namespace RecentListTest
 
 			// ACCERT
 			Assert.IsTrue(collection.Contains(Guid.NewGuid()));
-			Assert.AreEqual(2, collection.Count, "1 != 2");
+			Assert.AreEqual(1, collection.Count, "1 != 2");
 		}
 	}
 }

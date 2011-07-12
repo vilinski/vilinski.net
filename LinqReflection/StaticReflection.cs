@@ -58,26 +58,28 @@ namespace LinqReflection
             Getter getter = null;
             if (!_Getters.TryGetValue(key, out getter))
             {
-                var property = type.GetProperty(memberName);
-                Type memberType;
-                MemberInfo member;
+                PropertyInfo property = type.GetProperty(memberName);
+                MemberExpression body = null;
+                ParameterExpression param = Expression.Parameter(type, "x");
                 if (property != null)
                 {
-                    member = property;
-                    memberType = property.PropertyType;
+                    var mi = property.GetGetMethod() ?? property.GetSetMethod();
+                    var isStatic = mi.IsStatic;
+                    body = Expression.Property(isStatic ? null : param, property);
                 }
                 else
                 {
-                    var field = type.GetField(memberName);
-                    member = field;
-                    memberType = field.FieldType;
+                    FieldInfo field = type.GetField(memberName);
+                    if (field != null)
+                    {
+                        var isStatic = field.IsStatic;
+                        body = Expression.Field(isStatic ? null : param, field);
+                    }
                 }
-                if (member == null)
+                if (body == null)
                     return null;
 
-	            ParameterExpression param = Expression.Parameter(type, "x");
-	            var body = Expression.MakeMemberAccess(param, member);
-	            dynamic lambda = Expression.Lambda(memberType, body, param).Compile();
+	            dynamic lambda = Expression.Lambda(body, param).Compile();
                 getter = (Getter) buildGetter(lambda);
                 _Getters[key] = getter;
             }
