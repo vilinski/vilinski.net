@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using JetBrains.Annotations;
+
 using ReactiveUI;
 
 namespace Vilinski.RxRegex.ViewModel
@@ -13,18 +15,20 @@ namespace Vilinski.RxRegex.ViewModel
 	/// </summary>
 	public class RegexViewModel : ReactiveObject
 	{
-		public Regex Model { 
-			get
-			{
-				return new Regex(Pattern, Options);
-			}
+		public Regex Model
+		{
+			get { return new Regex(Pattern, Options); }
 		}
 
 		#region Pattern
 
+		[UsedImplicitly]
+		private string _Pattern;
+
 		protected RegexOptions Options
 		{
-			get { 
+			get
+			{
 				RegexOptions options = RegexOptions.None;
 
 				if (IgnoreCase)
@@ -49,8 +53,6 @@ namespace Vilinski.RxRegex.ViewModel
 			}
 		}
 
-		private string _Pattern;
-
 		public string Pattern
 		{
 			get { return _Pattern; }
@@ -61,6 +63,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region IgnoreCase
 
+		[UsedImplicitly]
 		private bool _IgnoreCase;
 
 		public bool IgnoreCase
@@ -73,6 +76,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region Multiline
 
+		[UsedImplicitly]
 		private bool _Multiline;
 
 		public bool Multiline
@@ -85,6 +89,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region ExplicitCapture
 
+		[UsedImplicitly]
 		private bool _ExplicitCapture;
 
 		public bool ExplicitCapture
@@ -97,6 +102,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region Compiled
 
+		[UsedImplicitly]
 		private bool _Compiled;
 
 		public bool Compiled
@@ -109,6 +115,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region Singleline
 
+		[UsedImplicitly]
 		private bool _Singleline;
 
 		public bool Singleline
@@ -121,6 +128,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region IgnorePatternWhitespace
 
+		[UsedImplicitly]
 		private bool _IgnorePatternWhitespace;
 
 		public bool IgnorePatternWhitespace
@@ -133,6 +141,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region RightToLeft
 
+		[UsedImplicitly]
 		private bool _RightToLeft;
 
 		public bool RightToLeft
@@ -145,6 +154,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region ECMAScript
 
+		[UsedImplicitly]
 		private bool _ECMAScript;
 
 		public bool ECMAScript
@@ -157,6 +167,7 @@ namespace Vilinski.RxRegex.ViewModel
 
 		#region CultureInvariant
 
+		[UsedImplicitly]
 		private bool _CultureInvariant;
 
 		public bool CultureInvariant

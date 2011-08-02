@@ -1,11 +1,42 @@
-﻿<UserControl x:Class="Vilinski.RxRegex.View.RxRegexView"
+﻿<UserControl x:Class="Vilinski.RxRegex.View.RxRegexView" 
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
-    </Grid>
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ViewModel="clr-namespace:Vilinski.RxRegex.ViewModel" 
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance 
+                ViewModel:RegexViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="320" d:DesignWidth="600">
+    <StackPanel>
+        <Expander Header="Options">
+            <GroupBox Header="Options">
+                <UniformGrid>
+                    <CheckBox IsChecked="{Binding Path=IgnoreCase}">IgnoreCase</CheckBox>
+                    <CheckBox IsChecked="{Binding Path=Singleline}">Singleline</CheckBox>
+                    <CheckBox IsChecked="{Binding Path=Multiline}">Multiline</CheckBox>
+                    <CheckBox IsChecked="{Binding Path=ExplicitCapture}">ExplicitCapture</CheckBox>
+                </UniformGrid>
+            </GroupBox>
+        </Expander>
+        <Expander Header="Advanced">
+            <GroupBox Header="Advanced options">
+                <UniformGrid>
+                    <CheckBox Content="IngrorePatternWhitespace" IsChecked="{Binding Path=IgnorePatternWhitespace}"></CheckBox>
+                    <CheckBox Content="RightToLeft" IsChecked="{Binding Path=RightToLeft}"></CheckBox>
+                    <CheckBox Content="ECMAScript" IsChecked="{Binding Path=ECMAScript}"></CheckBox>
+                    <CheckBox Content="CultureInvariant" IsChecked="{Binding Path=CultureInvariant}"></CheckBox>
+                    <CheckBox Content="Compiled" IsChecked="{Binding Path=Compiled}"></CheckBox>
+                </UniformGrid>
+            </GroupBox>
+        </Expander>
+        <GroupBox Header="Pattern">
+            <TextBox Text="{Binding Path=Pattern}"></TextBox>
+        </GroupBox>
+        <GroupBox Header="Input">
+            <TextBox></TextBox>
+        </GroupBox>
+        <GroupBox Header="Match">
+            <TreeView VerticalContentAlignment="Top" Height="160"></TreeView>
+        </GroupBox>
+    </StackPanel>
 </UserControl>
