@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -15,15 +16,49 @@ namespace Vilinski.RxRegex.ViewModel
 	/// </summary>
 	public class RegexViewModel : ReactiveObject
 	{
+		protected RegexViewModel()
+		{
+			var optionChanges = this.WhenAny(
+				_ => _.Input,
+				_ => _.Pattern,
+				_ => _.IgnoreCase,
+				_ => _.Multiline,
+				_ => _.ExplicitCapture,
+				_ => _.Compiled,
+				_ => _.Singleline,
+				_ => _.IgnorePatternWhitespace,
+				_ => _.RightToLeft,
+				_ => _.ECMAScript,
+				_ => _.CultureInvariant,
+				(
+					input,
+					pattern,
+					ignoreCase,
+					multiline,
+					explicitCapture,
+					compiled,
+					singleline,
+					ignorePatternWhitespace,
+					rightToLeft,
+					ecmaScript,
+					cultureInvariant
+					) => Options //Regex.Match(input.Value, pattern.Value, Options)
+				);
+
+			// TODOo make _Options rxoprop, update match from throttled input and pattern, better with sanduhr
+			//_SpinnerVisibility = new ObservableAsPropertyHelper<bool>(optionChanges, x => this.RaisePropertyChanged(_ => _.Pattern), Visibility.Collapsed);
+
+			this.ObservableForProperty(_=>_.Pattern)
+				.Throttle(TimeSpan.FromMilliseconds(800))
+				.Select(x => x.Value).DistinctUntilChanged()
+				.Where(x => !String.IsNullOrWhiteSpace(x));
+			//.Subscribe(ExecuteSearch.Execute);
+		}
+
 		public Regex Model
 		{
 			get { return new Regex(Pattern, Options); }
 		}
-
-		#region Pattern
-
-		[UsedImplicitly]
-		private string _Pattern;
 
 		protected RegexOptions Options
 		{
@@ -52,6 +87,37 @@ namespace Vilinski.RxRegex.ViewModel
 				return options;
 			}
 		}
+
+		#region SpinnerVisibility
+
+		[UsedImplicitly]
+		private ObservableAsPropertyHelper<bool> _SpinnerVisibility;
+
+		public bool SpinnerVisibility
+		{
+			get { return _SpinnerVisibility.Value; }
+		}
+
+		#endregion SpinnerVisibility
+
+
+		#region Input
+
+		[UsedImplicitly]
+		private string _Input;
+
+		public string Input
+		{
+			get { return _Input; }
+			set { this.RaiseAndSetIfChanged(x => x.Input, value); }
+		}
+
+		#endregion Input
+
+		#region Pattern
+
+		[UsedImplicitly]
+		private string _Pattern;
 
 		public string Pattern
 		{
