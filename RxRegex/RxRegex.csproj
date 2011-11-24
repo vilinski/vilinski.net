@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="JetBrains.Annotations">
-      <HintPath>..\..\..\..\Program Files (x86)\JetBrains\ReSharper\v6.0\Bin\JetBrains.Annotations.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\JetBrains\ReSharper\v6.0\Bin\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveUI">
       <HintPath>..\packages\reactiveui-core.2.4.0.0\lib\Net4\ReactiveUI.dll</HintPath>
@@ -75,7 +75,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\MatchViewModel.cs" />
     <Compile Include="ViewModel\RegexViewModel.cs" />
+    <Compile Include="View\RegexEditorDialog.xaml.cs">
+      <DependentUpon>RegexEditorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\RxRegexView.xaml.cs">
       <DependentUpon>RxRegexView.xaml</DependentUpon>
     </Compile>
@@ -90,6 +94,10 @@
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="View\RegexEditorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\RxRegexView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
