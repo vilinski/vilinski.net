@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Reflection;
@@ -67,14 +68,14 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		public static void ExecuteFastPropertyGet<T, P>(FastProperty<T, P> property, T item, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 			{
 				P value = property.Get(item);
 			}
-			DateTime end = DateTime.Now;
-
-			results.Text = (end - start).TotalMilliseconds + "ms";
+            
+			sw.Stop();
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		/// <summary>
@@ -88,12 +89,12 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		public static void ExecuteFastPropertySet<T, TProperty>(FastProperty<T, TProperty> property, T item, TProperty value, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 				property.Set(item, value);
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		private void FPRunButton_Click(object sender, EventArgs e)
@@ -113,12 +114,12 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		public static void ExecuteStandardGet<T>(PropertyInfo property, T instance, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 				property.GetValue(instance, null);
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		/// <summary>
@@ -132,14 +133,14 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		public static void ExecuteStandardSet<T, TProperty>(PropertyInfo property, T instance, TProperty value, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 			{
 				property.SetValue(instance, value, null);
 			}
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		private void STDRunButton_Click(object sender, EventArgs e)
@@ -157,26 +158,26 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		private static void nativeGet(Employee instance, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 			{
 				string value = instance.Name;
 			}
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		private static void nativeSet(Employee instance, string value, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 			{
 				instance.Name = value;
 			}
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		private void NRunButton_Click(object sender, EventArgs e)
@@ -192,7 +193,7 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		public static void MakeFastProperties(Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			var types =
 				(from type in Assembly.GetAssembly(typeof(Guid)).GetTypes()
 				where !type.IsGenericType || !type.IsGenericTypeDefinition
@@ -219,9 +220,9 @@ namespace LinqReflection.PerformanceTest
 
 			//    typeCount++;
 			//}
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms" + " - " + typeCount + " types - " + fastPropertyCount + "/" + propertyCount + " properties.";
+			results.Text = sw.ElapsedMilliseconds + "ms" + " - " + typeCount + " types - " + fastPropertyCount + "/" + propertyCount + " properties.";
 		}
 
 		private void MakeRunButton_Click(object sender, EventArgs e)
@@ -243,26 +244,26 @@ namespace LinqReflection.PerformanceTest
 		/// <param name="results">The results.</param>
 		private static void dynamicGet(Employee instance, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 			{
 				string value = ((dynamic)instance).Name;
 			}
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 
 		private static void dynamicSet(Employee instance, string value, Control results)
 		{
-			DateTime start = DateTime.Now;
+			var sw = Stopwatch.StartNew();
 			for (int i = 0; i < 10000000; i++)
 			{
 				((dynamic)instance).Name = value;
 			}
-			DateTime end = DateTime.Now;
+			sw.Stop();
 
-			results.Text = (end - start).TotalMilliseconds + "ms";
+			results.Text = sw.ElapsedMilliseconds + "ms";
 		}
 	}
 }
