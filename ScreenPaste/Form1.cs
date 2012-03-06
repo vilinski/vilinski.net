@@ -50,7 +50,7 @@ namespace ScreenPaste
             graphics2.CopyFromScreen(Bounds.X, Bounds.Y, 0, 0, size, CopyPixelOperation.SourceCopy);
             _timestamp = DateTime.Now;
             _fileName = ScreenPasteApplicationContext.GetExecutableDirectory() +
-                              string.Format(Const.FILENAME_FORMAT, _timestamp) + ".png";
+                        string.Format(Const.FILENAME_FORMAT, _timestamp) + ".png";
             if (!Directory.Exists(ScreenPasteApplicationContext.GetExecutableDirectory()))
                 Directory.CreateDirectory(ScreenPasteApplicationContext.GetExecutableDirectory());
             bitmap.Save(_fileName, ImageFormat.Png);

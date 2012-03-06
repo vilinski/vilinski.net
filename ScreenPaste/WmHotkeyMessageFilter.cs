@@ -14,6 +14,8 @@ namespace ScreenPaste
             _appContext = context;
         }
 
+        #region IMessageFilter Members
+
         public bool PreFilterMessage(ref Message m)
         {
             if (m.Msg != WM_HOTKEY)
@@ -21,13 +23,15 @@ namespace ScreenPaste
             _appContext.HandleHotkey();
             return true;
         }
+
+        #endregion
     }
 
     public struct Rect
     {
-        public int Left;
-        public int Top;
-        public int Right;
         public int Bottom;
+        public int Left;
+        public int Right;
+        public int Top;
     }
 }

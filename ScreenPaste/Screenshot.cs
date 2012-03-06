@@ -33,7 +33,7 @@ namespace ScreenPaste
 
         private Bitmap Take(Screen currentScreen)
         {
-            var bounds = currentScreen.Bounds;
+            Rectangle bounds = currentScreen.Bounds;
             var bitmap = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
             Graphics
                 .FromImage(bitmap)

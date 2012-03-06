@@ -22,10 +22,10 @@ namespace ScreenPaste
                                    {"key", Const.IMGUR_API_KEY},
                                    {"upload", Convert.ToBase64String(memoryStream.ToArray())}
                                };
-                return (string)XDocument
-                        .Load(new MemoryStream(webClient.UploadValues("http://htv.su/api?format=xml", data)))
-                        .Descendants("img_viewer")
-                        .First();
+                return (string) XDocument
+                                    .Load(new MemoryStream(webClient.UploadValues("http://htv.su/api?format=xml", data)))
+                                    .Descendants("img_viewer")
+                                    .First();
             }
         }
     }
