@@ -57,7 +57,7 @@
     </ProjectReference>
     <ProjectReference Include="..\LinqReflection.csproj">
       <Project>{8015FE77-5B1C-4E22-A08D-E30B348DE8C5}</Project>
-      <Name>LinqReflection</Name>
+      <Name>LinqReflection %28LinqReflection\LinqReflection%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
