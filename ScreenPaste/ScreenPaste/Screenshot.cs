@@ -23,22 +23,32 @@ namespace ScreenPaste
 
         private void Save()
         {
-            string filename = ScreenPasteApplicationContext.GetExecutableDirectory() +
+        	var path = ScreenPasteApplicationContext.GetSavePath();
+        	string filename = path +
                               string.Format(Const.FILENAME_FORMAT, Timestamp) + ".png";
-            if (!Directory.Exists(ScreenPasteApplicationContext.GetExecutableDirectory()))
-                Directory.CreateDirectory(ScreenPasteApplicationContext.GetExecutableDirectory());
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
             Bitmap.Save(filename, ImageFormat.Png);
             FileName = filename;
         }
 
-        private Bitmap Take(Screen currentScreen)
+    	public Bitmap Take()
+    	{
+    		return Take(Screen.PrimaryScreen.Bounds);
+    	}
+
+    	public Bitmap Take(Screen screen)
         {
-            var bounds = currentScreen.Bounds;
-            var bitmap = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
-            Graphics
-                .FromImage(bitmap)
-                .CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
-            return bitmap;
+    		return Take(screen.Bounds);
         }
+
+    	public static Bitmap Take(Rectangle bounds)
+    	{
+    		var bitmap = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
+    		Graphics
+    			.FromImage(bitmap)
+    			.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+    		return bitmap;
+    	}
     }
 }

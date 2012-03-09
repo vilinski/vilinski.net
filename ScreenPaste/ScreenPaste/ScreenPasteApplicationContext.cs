@@ -3,7 +3,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+
+using ScreenPaste.SendTo;
 
 namespace ScreenPaste
 {
@@ -20,14 +23,15 @@ namespace ScreenPaste
 
         public ScreenPasteApplicationContext()
         {
-            if (!Directory.Exists(GetExecutableDirectory()))
-                Directory.CreateDirectory(GetExecutableDirectory());
+        	var directory = GetSavePath();
+        	if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
             createContextMenu();
             createNotificationIcon();
             ThreadExit += OnApplicationExit;
         }
 
-        public static string GetExecutableDirectory()
+        public static string GetSavePath()
         {
             return Path.GetDirectoryName(Application.ExecutablePath) + "\\screenshots\\";
         }
@@ -47,7 +51,24 @@ namespace ScreenPaste
             _contextMenu.MenuItems.Add("Открыть папку со скринами...").Click += openFolderMenuItem_Click;
             _contextMenu.MenuItems.Add("Выделить область").Click += selresizeItem_Click;
             _contextMenu.MenuItems.Add("-");
-            _contextMenu.MenuItems.Add("Перейти на сайт www.htv.su").Click += link_siteMenuItem_Click;
+			var sendTo = _contextMenu.MenuItems.Add("Отправить...");
+        	foreach (var sender in SendToFactory.Instance.Senders.Select(s=>s.Metadata).OrderBy(m=>m.Name))
+        	{
+        		var item = sendTo.MenuItems.Add(sender.Name);
+        		item.Tag = sender.ID;
+        		item.Click +=
+        			(s, e) =>
+        				{
+        					var bitmap = new Screenshot().Take();
+        					ShowNotificationBaloon("Загрузка на " + item.Name + "...");
+        					var str = SendToFactory.Instance.SendTo(bitmap, (Guid) item.Tag);
+        					LastScreenshotUri = str;
+        					if (!string.IsNullOrEmpty(str))
+        						ShowNotificationBaloon("Скрин загружен: " + str + "\nКликни для открытия скриншота.");
+        				};
+        	}
+			_contextMenu.MenuItems.Add("-");
+			_contextMenu.MenuItems.Add("Перейти на сайт www.htv.su").Click += link_siteMenuItem_Click;
             _contextMenu.MenuItems.Add("-");
             MenuItem menuItem2 = _contextMenu.MenuItems.Add("Запускать с Windows");
             menuItem2.Checked = AutoStart.IsAutoStartEnabled;
@@ -74,9 +95,10 @@ namespace ScreenPaste
             var screenshot = new Screenshot();
             screenshot.TakeAndSave();
             ShowNotificationBaloon("Загрузка скрина...");
-            string str = PostingServies.PostToImgur(screenshot.Bitmap);
+            string str = new SendToImgur().Send(screenshot.Bitmap);
             LastScreenshotUri = str;
-            ShowNotificationBaloon("Скрин загружен: " + str + "\nКликни для открытия скриншота на сайте www.htv.su");
+			if (!string.IsNullOrEmpty(str))
+				ShowNotificationBaloon("Скрин загружен: " + str + "\nКликни для открытия скриншота на сайте www.htv.su");
             NIcon.ContextMenu.MenuItems.Find("copyUrl", true)[0].Enabled = LastScreenshotUri != "";
         }
 
@@ -103,7 +125,7 @@ namespace ScreenPaste
 
         private void openFolderMenuItem_Click(object sender, EventArgs e)
         {
-            openLink(GetExecutableDirectory());
+            openLink(GetSavePath());
         }
 
         private void selresizeItem_Click(object sender, EventArgs e)

@@ -10,6 +10,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
+using ScreenPaste.SendTo;
+
 namespace ScreenPaste
 {
     public partial class Form1 : Form
@@ -49,12 +51,13 @@ namespace ScreenPaste
             Size size = Size;
             graphics2.CopyFromScreen(Bounds.X, Bounds.Y, 0, 0, size, CopyPixelOperation.SourceCopy);
             _timestamp = DateTime.Now;
-            _fileName = ScreenPasteApplicationContext.GetExecutableDirectory() +
+        	var path = ScreenPasteApplicationContext.GetSavePath();
+        	_fileName = path +
                               string.Format(Const.FILENAME_FORMAT, _timestamp) + ".png";
-            if (!Directory.Exists(ScreenPasteApplicationContext.GetExecutableDirectory()))
-                Directory.CreateDirectory(ScreenPasteApplicationContext.GetExecutableDirectory());
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
             bitmap.Save(_fileName, ImageFormat.Png);
-            string str = PostingServies.PostToImgur(bitmap);
+            string str = new SendToImgur().Send(bitmap);
             ScreenPasteApplicationContext.LastScreenshotUri = str;
             ScreenPasteApplicationContext.ShowNotificationBaloon(
                 "Скрин загружен: " + str + "\nКликни для открытия скриншота на сайте www.htv.su");
@@ -75,10 +78,10 @@ namespace ScreenPaste
             Size size = Size;
             graphics2.CopyFromScreen(x, y, 0, 0, size, CopyPixelOperation.SourceCopy);
             _timestamp = DateTime.Now;
-            string filename = ScreenPasteApplicationContext.GetExecutableDirectory() +
-                              string.Format(Const.FILENAME_FORMAT, _timestamp) + ".png";
-            if (!Directory.Exists(ScreenPasteApplicationContext.GetExecutableDirectory()))
-                Directory.CreateDirectory(ScreenPasteApplicationContext.GetExecutableDirectory());
+        	var path = ScreenPasteApplicationContext.GetSavePath();
+        	string filename = path + string.Format(Const.FILENAME_FORMAT, _timestamp) + ".png";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
             bitmap.Save(filename, ImageFormat.Png);
             _fileName = filename;
         }
